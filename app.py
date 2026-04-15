@@ -31,6 +31,13 @@ def init_db():
     return jsonify({"Message": "Database init completed"})
 
 
+app = Flask(__name__)
+
+products = [
+    {"id":1, "name":"Keyboard","price":49.60},
+    {"id":2, "name":"Pillow","price":20.40},
+    {"id":3, "name":"book","price":5.33}
+]
 @app.route("/")
 def home():
     return jsonify({
@@ -46,6 +53,7 @@ def get_products():
     conn.close()
     return jsonify([dict(row)for row in rows])
 
+    return jsonify(products)
     
 
 @app.route("/products", methods=["POST"])
@@ -58,12 +66,18 @@ def add_product():
     cursor.execute("INSERT INTO products (name,price) VALUES (?, ?)", (name,price))
     conn.commit()
     new_id = cursor.lastrowid
-    conn.close() 
+    conn.close()
     new_product = {
         "id" : new_id,
         "name" :name ,
         "price": price
     }
+    new_product = {
+        "id" : len(products)+1,
+        "name" :data.get("name"),
+        "price": data.get("price")
+    }
+    products.append(new_product)
     return jsonify({"message":"Product added", "product": new_product}), 201
 
 
@@ -72,6 +86,5 @@ if __name__ == "__main__":
         init_db()
     app.run(debug=True)
 
-            
 
 
