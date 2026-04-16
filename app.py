@@ -30,9 +30,6 @@ def init_db():
     conn.close()
     return jsonify({"Message": "Database init completed"})
 
-
-app = Flask(__name__)
-
 products = [
     {"id":1, "name":"Keyboard","price":49.60},
     {"id":2, "name":"Pillow","price":20.40},
