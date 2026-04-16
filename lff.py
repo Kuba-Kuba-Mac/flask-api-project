@@ -107,6 +107,52 @@ def update_task(id):
 
     return jsonify({"message": "task updated"})
 
+# =====================================
+# take by one
+# =====================================
+@app.route("/tasks/<int:id>", methods=["GET"])
+def get_by_one(id):
+    conn = get_db_connection()
+    task = conn.execute(
+        "SELECT * FROM tasks WHERE id = ?",
+        (id,)
+    ).fetchone()
+    conn.close()
+    if task is None:
+        return jsonify({"message":"task absent  "}),404
+    else :
+        return jsonify(dict(task))
+
+
+# =====================================
+# filter a done or not done ?
+# =====================================
+@app.route("/tasks", methods=["GET"])
+def get_task():
+    done = request.args.get("done")
+    conn = get_db_connection()
+    if done is not None:
+        done_value = 1 if done.lower() == "true" else 0
+        tasks = conn.execute(
+            "SELECT * FROM tasks WHERE done = ?",
+            (done_value,)
+        ).fetchall()
+    else :
+        tasks = conn.execute(
+            "SELECT * FROM tasks"
+        ).fetchall()
+    conn.close()
+    return jsonify([dict(task) for task in tasks])
+
+
+
+
+
+
+
+
+
+
 
 # =====================================
 # RUN APP
