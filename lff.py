@@ -145,6 +145,23 @@ def get_task():
     return jsonify([dict(task) for task in tasks])
 
 
+# =====================================
+# search
+# =====================================
+@app.route("/tasks",methods = ["GET"])
+def search():
+    search = request.args.get("search")
+    conn = get_db_connection()
+    if search:
+        conn.execute("SELECT * FROM tasks WHERE title LIKE ?",(f"%{search}%",)
+        ).fetchall()
+    else :
+        tasks = conn.execute(
+            "SELECT * FROM tasks"
+        ).fetchall()
+    conn.close()
+
+    return jsonify([dict(task) for task in tasks])
 
 
 
